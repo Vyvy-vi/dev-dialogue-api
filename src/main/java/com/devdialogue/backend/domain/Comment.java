@@ -20,7 +20,7 @@ public class Comment extends BaseEntity {
 
     @JoinColumn
     @ManyToOne
-    @JsonIgnoreProperties({"commentList"})
+    @JsonIgnoreProperties({"questionList", "answerList", "commentList"})
     private SecuredUser author;
 
     @ManyToOne

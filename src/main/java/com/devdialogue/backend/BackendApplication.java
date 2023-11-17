@@ -3,6 +3,7 @@ package com.devdialogue.backend;
 import com.devdialogue.backend.domain.Admin;
 import com.devdialogue.backend.domain.SecuredUser;
 import com.devdialogue.backend.services.AdminService;
+import com.devdialogue.backend.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -19,6 +20,7 @@ public class BackendApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String ... args) throws Exception {
+		String authorities = Utils.getAuthoritiesForUsers().get("ADMIN").concat("::ADMIN");
 		Admin admin = Admin.builder()
 				.name("Dev dialogue Admin")
 				.email("admin@devdialogue.cc")
@@ -26,6 +28,7 @@ public class BackendApplication implements CommandLineRunner {
 						SecuredUser.builder()
 								.username("admin")
 								.password("admin@1234")
+								.authorities(authorities)
 								.build()
 				)
 				.build();
