@@ -11,16 +11,16 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Admin {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+public class Admin extends BaseEntity {
+    // Generated id, createdAt, updatedAt properties are inherited from BaseEntity
+
     private String name;
+
+    @Column(nullable = false, unique = true)
     private String email;
-    private String usertag;
 
     @OneToOne
     @JoinColumn
-    @JsonIgnoreProperties({"admin"})
+    @JsonIgnoreProperties({"admin", "password"})
     private SecuredUser securedUser;
 }

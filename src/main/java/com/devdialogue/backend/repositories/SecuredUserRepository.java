@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SecuredUserRepository extends JpaRepository<SecuredUser, Integer> {
-    SecuredUser findByEmail(String name);
+    SecuredUser findByUsername(String username);
 }

@@ -1,9 +1,11 @@
 package com.devdialogue.backend.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -11,16 +13,28 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+public class User extends BaseEntity {
+    // Generated id, createdAt, updatedAt properties are inherited from BaseEntity
+
     private String name;
+
+    @Column(nullable = false, unique = true)
     private String email;
-    private String usertag;
+
+    @OneToMany(mappedBy = "author")
+    @JsonIgnoreProperties({"author"})
+    private List<Question> questionList;
+
+    @OneToMany(mappedBy = "author")
+    @JsonIgnoreProperties({"author"})
+    private List<Answer> answerList;
+
+    @OneToMany(mappedBy = "author")
+    @JsonIgnoreProperties({"author"})
+    private List<Comment> commentList;
 
     @OneToOne
     @JoinColumn
-    @JsonIgnoreProperties({"user"})
+    @JsonIgnoreProperties({"user", "password"})
     private SecuredUser securedUser;
 }

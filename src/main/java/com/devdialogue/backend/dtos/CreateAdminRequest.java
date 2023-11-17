@@ -1,7 +1,7 @@
 package com.devdialogue.backend.dtos;
 
+import com.devdialogue.backend.domain.Admin;
 import com.devdialogue.backend.domain.SecuredUser;
-import com.devdialogue.backend.domain.User;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreateUserRequest {
+public class CreateAdminRequest {
     private String username;
     private String password;
 
@@ -20,8 +20,8 @@ public class CreateUserRequest {
     @NotBlank
     private String email;
 
-    public User to() {
-        return User.builder()
+    public Admin to() {
+        return Admin.builder()
                 .name(this.name)
                 .email(this.email)
                 .securedUser(SecuredUser.builder()

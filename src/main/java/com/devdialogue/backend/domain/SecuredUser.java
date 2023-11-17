@@ -23,7 +23,7 @@ public class SecuredUser implements UserDetails {
     private int id;
 
     @Column(unique = true, nullable = false)
-    private String email;
+    private String username;
 
     @Column(nullable = false)
     private String password;
@@ -49,7 +49,7 @@ public class SecuredUser implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.email;
+        return this.username;
     }
 
     @Override
