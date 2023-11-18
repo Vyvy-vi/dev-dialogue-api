@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
@@ -21,16 +22,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.httpBasic().and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/user/").hasAnyAuthority("VIEW_SELF_USER", "VIEW_ALL_USER", "SUPER_ADMIN")
-                .antMatchers(HttpMethod.POST, "/user/").permitAll()
-                .antMatchers(HttpMethod.GET, "/questions/").hasAnyAuthority("VIEW_QUESTIONS", "SUPER_ADMIN")
-                .antMatchers(HttpMethod.POST,"/questions/").hasAuthority("CREATE_QUESTIONS")
-                .antMatchers(HttpMethod.DELETE, "/questions/").hasAnyAuthority("DELETE_QUESTIONS", "SUPER_ADMIN")
+                .antMatchers(HttpMethod.GET, "/users").hasAnyAuthority("VIEW_SELF_USER", "VIEW_ALL_USER", "SUPER_ADMIN")
+                .antMatchers(HttpMethod.GET, "/questions").hasAnyAuthority("VIEW_QUESTIONS", "SUPER_ADMIN")
+                .antMatchers(HttpMethod.POST,"/questions").hasAuthority("CREATE_QUESTIONS")
+                .antMatchers(HttpMethod.DELETE, "/questions").hasAnyAuthority("DELETE_QUESTIONS", "SUPER_ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/questions/**").hasAnyAuthority("DELETE_SELF_QUESTIONS", "DELETE_QUESTIONS", "SUPER_ADMIN")
-                .antMatchers(HttpMethod.GET, "/admin/**").hasAnyAuthority("VIEW_ADMIN", "SUPER_ADMIN")
-                .antMatchers(HttpMethod.POST, "/admin/").hasAnyAuthority("CREATE_ADMIN", "SUPER_ADMIN")
-                .antMatchers("/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/admin").hasAnyAuthority("VIEW_ADMIN", "SUPER_ADMIN")
+                .antMatchers(HttpMethod.POST, "/admin").hasAnyAuthority("CREATE_ADMIN", "SUPER_ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/admin").hasAuthority("SUPER_ADMIN")
+                .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .and()
                 .formLogin();
+
     }
 }

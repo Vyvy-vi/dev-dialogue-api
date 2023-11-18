@@ -5,6 +5,8 @@ import com.devdialogue.backend.domain.User;
 import com.devdialogue.backend.dtos.CreateUserRequest;
 import com.devdialogue.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +24,7 @@ public class UserController {
     @GetMapping
     public List<User> getDetails() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
+        System.out.println(authentication.getPrincipal());
         SecuredUser securedUser = (SecuredUser) authentication.getPrincipal();
         User user = securedUser.getUser();
         if (user == null) return userService.findAll();
@@ -33,15 +35,25 @@ public class UserController {
     public void createUser(@RequestBody @Valid CreateUserRequest createUserRequest) {
         userService.createUser(createUserRequest.to());
     }
-
-    // admin-only
+    
     @GetMapping("/{id}")
     public User getUserById(@PathVariable("id") int id) {
+        return userService.getUser(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable("id") int id) {
+        if (userService.getUser(id) == null) throw new RuntimeException("User with id not found");
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         SecuredUser securedUser = (SecuredUser) authentication.getPrincipal();
 
         boolean isCalledByAdmin = securedUser.getAuthorities().stream().anyMatch(x->x.getAuthority() == "ADMIN");
-        if (isCalledByAdmin) return userService.getUser(id);
-        throw new RuntimeException("User is not authorised");
+        if (isCalledByAdmin) {
+            userService.deleteUser(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("User is not authorised", HttpStatus.UNAUTHORIZED);
+        }
     }
 }

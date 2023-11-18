@@ -18,14 +18,15 @@ public class SecuredUserService implements UserDetailsService {
     PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return securedUserRepository.findByUsername(email);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return securedUserRepository.findByUsername(username);
     }
 
     public SecuredUser save(SecuredUser securedUser, String userType) {
         if (securedUserRepository.findByUsername(securedUser.getUsername()) != null) return null;
         String encryptedPassword = passwordEncoder.encode(securedUser.getPassword());
         String authorities = Utils.getAuthoritiesForUsers().get(userType);
+        System.out.println(authorities);
         securedUser.setPassword(encryptedPassword);
         securedUser.setAuthorities(authorities);
         return securedUserRepository.save(securedUser);

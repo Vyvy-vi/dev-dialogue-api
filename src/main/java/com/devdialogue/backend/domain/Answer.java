@@ -15,13 +15,10 @@ import java.util.List;
 public class Answer extends BaseEntity {
     // Generated id, createdAt, updatedAt properties are inherited from BaseEntity
 
-    @Enumerated(value = EnumType.STRING)
-    private Category category;
-
     @JoinColumn
     @ManyToOne
     @JsonIgnoreProperties({"questionList", "answerList", "commentList"})
-    private SecuredUser author;
+    private User author;
 
     @JoinColumn
     @ManyToOne

@@ -21,11 +21,6 @@ public class QuestionController {
     @Autowired
     private QuestionService questionService;
 
-    @GetMapping
-    public List<Question> findAllQuestions() {
-        return questionService.findAll();
-    }
-
     @PostMapping
     public Question createQuestion(@RequestBody @Valid CreateQuestionRequest createQuestionRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -35,15 +30,19 @@ public class QuestionController {
         return questionService.createQuestion(question);
     }
 
-
-    @GetMapping("/{id}")
-    public Question findQuestionById(@PathVariable("id") int id) {
-        return questionService.findById(id);
+    @GetMapping
+    public List<Question> getAllQuestions() {
+        return questionService.findAll();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteQuestion(@PathVariable("id") int id) {
-        Question question = questionService.findById(id);
+    @GetMapping("/{questionId}")
+    public Question getQuestionById(@PathVariable("questionId") int questionId) {
+        return questionService.findById(questionId);
+    }
+
+    @DeleteMapping("/{questionId}")
+    public ResponseEntity<?> deleteQuestion(@PathVariable("questionId") int questionId) {
+        Question question = questionService.findById(questionId);
         if (question == null) {
             return new ResponseEntity<>("Question with id not found", HttpStatus.NOT_FOUND);
         }
@@ -51,11 +50,32 @@ public class QuestionController {
         SecuredUser securedUser = (SecuredUser) authentication.getPrincipal();
         User user = securedUser.getUser();
         if (user == null || question.getAuthor() != null && question.getAuthor().getId() == user.getId()) {
-            questionService.deleteQuestion(id);
+            questionService.deleteQuestion(questionId);
             return new ResponseEntity<>("Question successfully deleted", HttpStatus.OK);
         }
         else {
             return new ResponseEntity<>("Can not delete a question you didn't create", HttpStatus.FORBIDDEN);
         }
     }
+
+    @PutMapping("/{questionId}")
+    public ResponseEntity<?> updateQuestion(@PathVariable("questionId") int questionId) {
+        Question question = questionService.findById(questionId);
+        if (question == null) {
+            return new ResponseEntity<>("Question with id not found", HttpStatus.NOT_FOUND);
+        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        SecuredUser securedUser = (SecuredUser) authentication.getPrincipal();
+        User user = securedUser.getUser();
+
+        if (user != null && question.getAuthor() != null && question.getAuthor().getId() == user.getId()) {
+            // questionService.deleteQuestion(questionId);
+            return new ResponseEntity<>("Question successfully update", HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>("Can not delete a question you didn't create", HttpStatus.FORBIDDEN);
+        }
+    }
+
+
 }
